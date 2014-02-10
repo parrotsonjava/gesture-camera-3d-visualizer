@@ -17,7 +17,7 @@ define ['jquery'], ($) ->
       idsUsed = {}
       for hand in frameHands
         idsUsed[hand.id] = true
-        @_currentHandElements[hand.id] = @_currentHandElements[hand.id] || @_createElement(hand.id, 'sphere')
+        @_currentHandElements[hand.id] = @_currentHandElements[hand.id] || @_createElement(hand.id, 'hand')
         moveElement @_currentHandElements[hand.id], getImagePosition(hand.palmPosition), getHandRotation(hand)
 
       @_removeElementsFrom @_currentHandElements, (handId for handId, handElement of @_currentHandElements when !idsUsed[handId])
