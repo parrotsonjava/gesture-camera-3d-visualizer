@@ -48,7 +48,7 @@ define ['jquery'], ($) ->
       element.css 'webkitTransform', "translateX(#{position[0]}px) translateY(#{position[1]}px) translateZ(#{position[2]}px) rotateX(#{rotation[0]}deg) rotateY(#{rotation[1]}deg) rotateZ(#{rotation[2]}deg)"
 
     getImagePosition = (position) ->
-      [ position[0] * 3, (position[2] * 3) - 200, (position[1] * 3) - 400 ]
+      [ position[0] * 3, (position[2] * 3) - 200, (position[1] * 3) - 200 ]
 
     getFingerRotation = (finger) ->
       [ -finger.direction[1] * 90, 0, finger.direction[0] * 90 ]

@@ -29,17 +29,20 @@
 
   border: 4px solid #A0A0A0;
 
-  background-color: rgba(255, 255, 255, .1);
-  background-image: -webkit-linear-gradient(rgba(255, 255, 255, .4) .1em, transparent .1em), -webkit-linear-gradient(0deg, rgba(255, 255, 255, .4) .1em, transparent .1em), -webkit-linear-gradient(rgba(255, 255, 255, .3) .05em, transparent .05em), -webkit-linear-gradient(0deg, rgba(255, 255, 255, .3) .05em, transparent .05em);
+  background-color: rgba(255, 255, 255, 1);
+  background-image:
+    -webkit-linear-gradient(rgba(0, 0, 0, .8) .1em, transparent .1em),
+    -webkit-linear-gradient(0deg, rgba(0, 0, 0, .8) .1em, transparent .1em),
+    -webkit-linear-gradient(rgba(0, 0, 0, .9) .05em, transparent .07em),
+    -webkit-linear-gradient(0deg, rgba(0, 0, 0, .9) .05em, transparent .07em);
   background-size: 5em 5em, 5em 5em, 1em 1em, 1em 1em;
   background-position: -.1em -.1em, -.1em -.1em, -.05em -.05em, -.05em -.05em;
 
   -webkit-transform-style: preserve-3d;
-  -webkit-transform: rotateX(75deg);
 }
 
 #scene {
-  -webkit-transform: rotateX(75deg);
+  -webkit-transform: translateY(10em) translateZ(-10em) rotateX(70deg);
 }
 
 #scene:before {
