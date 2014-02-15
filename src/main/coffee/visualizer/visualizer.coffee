@@ -2,7 +2,7 @@ define [], ->
   class Visualizer
 
     _createElement: (id, elementIdToClone) =>
-      newElement = $('#' + elementIdToClone).clone(true).css('backgroundColor', @_getRandomColor()).css('display': 'block')
+      newElement = $('#' + elementIdToClone).clone(true).css('backgroundColor', @_getRandomColor())
       $('#scene').append newElement
       return newElement
 

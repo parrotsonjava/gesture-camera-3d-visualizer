@@ -32,11 +32,20 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
       return "#{entity.id}_#{line.id}"
 
     getImagePosition = (line) ->
-      [line.start.x * 4000 - 200, -line.start.z * 1000, line.start.y * 10000]
+      startPosition = getPosition(line.start)
+      endPosition = getPosition(line.end)
+      x = (startPosition[index] + (endPosition[index] - startPosition[index]) / 2 for index in [0..2])
+
+      console.log x
+
+      return x
+
+    getPosition = (point) ->
+      [point.x * 4000 - 200, -point.z * 1000, point.y * 10000]
 
     getRotation = (line) ->
       direction = [ line.end.x - line.start.x, line.end.y - line.start.y, line.end.z - line.start.z ]
       directionLength = Math.sqrt(direction[0] * direction[0] + direction[1] * direction[1] + direction[2] * direction[2]);
-      direction = ( direction[index] / directionLength for index in [0...2])
+      direction = ( direction[index] / directionLength for index in [0..2])
 
       return [ -direction[1] * 90, 0, direction[0] * 90 ]
