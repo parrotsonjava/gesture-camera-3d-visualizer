@@ -13,13 +13,15 @@ define [
 
   start = ->
     filter = getFilter()
+    leapController = new LeapController()
+
     if (filter == 'Leap')
-      startLeapVisualizer()
+      startLeapVisualizer(leapController)
     else
       startSocketVisualizer(filter)
 
-  startLeapVisualizer = ->
-    new LeapVisualizer(new LeapController()).start()
+  startLeapVisualizer = (leapController) ->
+    new LeapVisualizer(leapController).start()
 
   startSocketVisualizer = (filter) ->
     hostName = 'localhost'

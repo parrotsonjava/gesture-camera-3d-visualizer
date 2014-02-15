@@ -34,11 +34,7 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
     getImagePosition = (line) ->
       startPosition = getPosition(line.start)
       endPosition = getPosition(line.end)
-      x = (startPosition[index] + (endPosition[index] - startPosition[index]) / 2 for index in [0..2])
-
-      console.log x
-
-      return x
+      (startPosition[index] + (endPosition[index] - startPosition[index]) / 2 for index in [0..2])
 
     getPosition = (point) ->
       [point.x * 4000 - 200, -point.z * 1000, point.y * 10000]
