@@ -1,4 +1,4 @@
-define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
+define ['cs!coffee/visualizer/visualizer', 'cs!coffee/helper/randomHelper', 'jquery'], (Visualizer, randomHelper, $) ->
   class LeapVisualizer extends Visualizer
 
     constructor: (leapController) ->
@@ -17,7 +17,7 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
       idsUsed = {}
       for hand in frameHands
         idsUsed[hand.id] = true
-        @_currentHandElements[hand.id] = @_currentHandElements[hand.id] || @_createElement(hand.id, 'hand')
+        @_currentHandElements[hand.id] = @_currentHandElements[hand.id] || @_createElement(randomHelper.randomText() + hand.id, 'hand')
         @_moveElement @_currentHandElements[hand.id], getScaleFactor(), getImagePosition(hand.palmPosition), getHandRotation(hand)
 
       @_removeElementsFrom @_currentHandElements, (handId for handId, handElement of @_currentHandElements when !idsUsed[handId])
@@ -26,7 +26,7 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
       idsUsed = {}
       for finger in frameFingers
         idsUsed[finger.id] = true
-        @_currentFingerElements[finger.id] = @_currentFingerElements[finger.id] || @_createElement(finger.id, 'finger')
+        @_currentFingerElements[finger.id] = @_currentFingerElements[finger.id] || @_createElement(randomHelper.randomText() + finger.id, 'finger')
         @_moveElement @_currentFingerElements[finger.id], getScaleFactor(), getImagePosition(finger.tipPosition), getFingerRotation(finger)
 
       @_removeElementsFrom @_currentFingerElements, (fingerId for fingerId, fingerElement of @_currentFingerElements when !idsUsed[fingerId])

@@ -50,7 +50,7 @@
   -webkit-transform: rotateX(90deg) translateZ(19.5em) translateY(20em);
 }
 
-.finger, .hand {
+.finger, .hand, .line {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -61,12 +61,16 @@
   -webkit-transform: translateX(14.5em) translateY(14.5em) translateZ(0);
 }
 
-.finger {
+.finger, .line {
   height: 3em;
 }
 
 .hand {
   font-size: 100px;
+}
+
+.line {
+  -webkit-transform-origin: 50% 100% 0;
 }
 
 .face {
@@ -118,6 +122,29 @@
 }
 
 .finger .face.right {
+  -webkit-transform: rotateY(90deg) translateX(-1em) translateZ(1em);
+  height: 3em;
+}
+
+.line .face.top {
+  -webkit-transform: translateZ(1em);
+  height: 3em;
+}
+
+.line .face.front {
+  -webkit-transform: rotateX(90deg) translateZ(-3em);
+}
+
+.line .face.back {
+  -webkit-transform: rotateX(90deg);
+}
+
+.line .face.left {
+  -webkit-transform: rotateY(90deg) translateX(-1em);
+  height: 3em;
+}
+
+.line .face.right {
   -webkit-transform: rotateY(90deg) translateX(-1em) translateZ(1em);
   height: 3em;
 }
