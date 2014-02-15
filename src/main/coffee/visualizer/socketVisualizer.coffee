@@ -1,4 +1,4 @@
-define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
+define ['cs!coffee/visualizer/visualizer', 'cs!coffee/geometry/point3', 'cs!coffee/geometry/vector3', 'jquery'], (Visualizer, Point3, Vector3, $) ->
   class SocketVisualizer extends Visualizer
 
     constructor: (socketClient, filteredType) ->
@@ -32,16 +32,19 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
       return "#{entity.id}_#{line.id}"
 
     getImagePosition = (line) ->
-      startPosition = getPosition(line.start)
-      endPosition = getPosition(line.end)
-      (startPosition[index] + (endPosition[index] - startPosition[index]) / 2 for index in [0..2])
+      startPosition = getShownPosition(line.start)
+      endPosition = getShownPosition(line.end)
+      startPosition.add(endPosition.subtract(startPosition).divide(2)).toArray()
 
-    getPosition = (point) ->
-      [point.x * 4000 - 200, -point.z * 1000, point.y * 10000]
+    getShownPosition = (point) ->
+      new Point3(point.x * 4000 - 200, -point.z * 1000, point.y * 10000)
 
     getRotation = (line) ->
-      direction = [ line.end.x - line.start.x, line.end.y - line.start.y, line.end.z - line.start.z ]
-      directionLength = Math.sqrt(direction[0] * direction[0] + direction[1] * direction[1] + direction[2] * direction[2]);
-      direction = ( direction[index] / directionLength for index in [0..2])
+      startPosition = getPosition(line.start)
+      endPosition = getPosition(line.end)
+      direction = endPosition.subtract(startPosition).normalize()
 
-      return [ -direction[1] * 90, 0, direction[0] * 90 ]
+      return [ -direction.y * 90, 0, direction.x * 90 ]
+
+    getPosition = (point) ->
+      return new Point3(point.x, point.y, point.z)
