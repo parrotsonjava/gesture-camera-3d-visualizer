@@ -18,7 +18,7 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
       for hand in frameHands
         idsUsed[hand.id] = true
         @_currentHandElements[hand.id] = @_currentHandElements[hand.id] || @_createElement(hand.id, 'hand')
-        @_moveElement @_currentHandElements[hand.id], getImagePosition(hand.palmPosition), getHandRotation(hand)
+        @_moveElement @_currentHandElements[hand.id], getScaleFactor(), getImagePosition(hand.palmPosition), getHandRotation(hand)
 
       @_removeElementsFrom @_currentHandElements, (handId for handId, handElement of @_currentHandElements when !idsUsed[handId])
 
@@ -27,9 +27,12 @@ define ['cs!coffee/visualizer/visualizer', 'jquery'], (Visualizer, $) ->
       for finger in frameFingers
         idsUsed[finger.id] = true
         @_currentFingerElements[finger.id] = @_currentFingerElements[finger.id] || @_createElement(finger.id, 'finger')
-        @_moveElement @_currentFingerElements[finger.id], getImagePosition(finger.tipPosition), getFingerRotation(finger)
+        @_moveElement @_currentFingerElements[finger.id], getScaleFactor(), getImagePosition(finger.tipPosition), getFingerRotation(finger)
 
       @_removeElementsFrom @_currentFingerElements, (fingerId for fingerId, fingerElement of @_currentFingerElements when !idsUsed[fingerId])
+
+    getScaleFactor = ->
+      [1, 1, 1]
 
     getImagePosition = (position) ->
       [ position[0] * 3, (position[2] * 3) - 200, (position[1] * 3) - 200 ]

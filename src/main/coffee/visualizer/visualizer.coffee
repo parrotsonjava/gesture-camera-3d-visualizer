@@ -14,5 +14,10 @@ define [], ->
     _getRandomColor: ->
       "##{Math.floor(Math.random() * 16777215).toString(16)}"
 
-    _moveElement: (element, position, rotation) ->
-      element.css 'webkitTransform', "translateX(#{position[0]}px) translateY(#{position[1]}px) translateZ(#{position[2]}px) rotateX(#{rotation[0]}deg) rotateY(#{rotation[1]}deg) rotateZ(#{rotation[2]}deg)"
+    _moveElement: (element, scale, position, rotation) ->
+      transform = ""
+      transform += "translateX(#{position[0]}px) translateY(#{position[1]}px) translateZ(#{position[2]}px)"
+      transform += "scaleX(#{scale[0]}) scaleY(#{scale[1]}) scaleZ(#{scale[2]})"
+      transform += "rotateX(#{rotation[0]}deg) rotateY(#{rotation[1]}deg) rotateZ(#{rotation[2]}deg)"
+
+      element.css 'webkitTransform', transform

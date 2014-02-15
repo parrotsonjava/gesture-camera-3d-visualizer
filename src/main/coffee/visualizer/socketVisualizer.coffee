@@ -24,20 +24,24 @@ define ['cs!coffee/visualizer/visualizer', 'cs!coffee/geometry/point3', 'cs!coff
           lineId = @_getLineId(entity, line)
           idsUsed[lineId] = true
           @_currentLineElements[lineId] = @_currentLineElements[lineId] || @_createElement(lineId, 'finger')
-          @_moveElement @_currentLineElements[lineId], getImagePosition(line), getRotation(line)
+          @_moveElement @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line),getRotation(line)
 
       @_removeElementsFrom @_currentLineElements, (lineId for lineId, lineElement of @_currentLineElements when !idsUsed[lineId])
 
     _getLineId: (entity, line) =>
       return "#{entity.id}_#{line.id}"
 
+    getScaleFactor = (line) ->
+      [1, 1, 1]
+
     getImagePosition = (line) ->
       startPosition = getShownPosition(line.start)
       endPosition = getShownPosition(line.end)
       startPosition.add(endPosition.subtract(startPosition).divide(2)).toArray()
+      #startPosition.toArray()
 
     getShownPosition = (point) ->
-      new Point3(point.x * 4000 - 200, -point.z * 1000, point.y * 10000)
+      new Point3(point.x * 4000 - 200, point.z * 1000 - 700, point.y * 7000 + 500)
 
     getRotation = (line) ->
       startPosition = getPosition(line.start)
