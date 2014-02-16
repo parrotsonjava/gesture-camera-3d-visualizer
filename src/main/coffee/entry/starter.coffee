@@ -5,11 +5,12 @@ define [
   'cs!coffee/input/socketClient',
   'cs!coffee/input/leapController',
   'cs!coffee/visualizer/leapVisualizer',
-  'cs!coffee/visualizer/socketVisualizer'
-], (Less, $, urlParser, SocketClient, LeapController, LeapVisualizer, SocketVisualizer) ->
+  'cs!coffee/visualizer/intelSocketVisualizer'
+  'cs!coffee/visualizer/kinectSocketVisualizer'
+], (Less, $, urlParser, SocketClient, LeapController, LeapVisualizer, IntelSocketVisualizer, KinectSocketVisualizer) ->
 
   getFilter = () ->
-    $.url().param('filter')
+    urlParser().param('filter')
 
   start = ->
     filter = getFilter()
@@ -26,7 +27,18 @@ define [
   startSocketVisualizer = (filter) ->
     hostName = 'localhost'
     port = 8100
-    new SocketVisualizer(new SocketClient(hostName, port), filter).start()
+
+
+
+    new IntelSocketVisualizer(new SocketClient(hostName, port), filter).start() if filter == 'IntelPerceptual'
+    new KinectSocketVisualizer(new SocketClient(hostName, port), filter).start() if filter == 'Kinect2'
+
+  zoomWindow = ->
+    setZoomLevel()
+    $(window).resize setZoomLevel
+
+  setZoomLevel = ->
+    $('body').css('zoom', window.innerWidth / 1024)
 
   waitForPurl = (callback) ->
     if !$? || !$.url?
@@ -35,4 +47,6 @@ define [
       callback()
 
   $ ->
-    waitForPurl(start)
+    zoomWindow()
+    start()
+    #waitForPurl(start)

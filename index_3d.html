@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>Visualizer (3D)</title>
+
+    <script src="src/main/js/vendor/jquery.js" ></script>
+    <script src="src/main/js/vendor/jquery-purl.js" ></script>
+</head>
+<body>
+    <iframe id="main" src="index.html" style="position: absolute; left: 0; top: 0; width: 60%; height: 60%; overflow: hidden;"></iframe>
+    <iframe id="front" src="index_top.html" style="position: absolute; left: 0; top: 60%; width: 40%; height: 40%; zoom: 40%; overflow: hidden;"></iframe>
+    <iframe id="top" src="index_front.html" style="position: absolute; left: 40%; top: 60%; width: 40%; height: 40%; zoom: 40%; overflow: hidden;"></iframe>
+
+    <script>
+        var filterParameter = $.url().param('filter');
+        $('#main').attr('src', 'index.html?filter=' + filterParameter);
+        $('#front').attr('src', 'index_front.html?filter=' + filterParameter);
+        $('#top').attr('src', 'index_top.html?filter=' + filterParameter);
+    </script>
+</body>

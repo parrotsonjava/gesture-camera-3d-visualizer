@@ -1,12 +1,17 @@
 <html>
 <head>
-    <title>Visualizer</title>
+    <title>Visualizer (Top)</title>
     <script data-main="src/main/config" src="src/main/js/vendor/require.js"></script>
     <link rel="stylesheet/less" type="text/css" href="style/less/common.less" />
+
+    <style>
+        #app #scene {
+            -webkit-transform: translateY(10em) translateZ(-10em) rotateX(0deg);
+        }
+    </style>
 </head>
 
 <body>
-<!-- <p style="color: red;">Bug: A leap motion device has to be connected for the visualizer to work</p>-->
 
 <div id="app" class="show-hands">
     <div id="scene">
