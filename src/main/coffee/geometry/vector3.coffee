@@ -25,14 +25,15 @@ define [], ->
 
     projectionOnto: (planeNormal) =>
       dotProduct = @dot planeNormal
-      new Vector3(@x - dotProduct * planeNormal.x, @y - dotProduct * planeNormal.y, @z - dotProduct * planeNormal.z);
+      new Vector3(@x - dotProduct * planeNormal.x, @y - dotProduct * planeNormal.y, @z - dotProduct * planeNormal.z).normalize()
 
     angleToDeg: (otherVector, upVector) =>
       @angleTo(otherVector, upVector) * 180 / Math.PI;
 
     angleTo: (otherVector, upVector) =>
       normalVector = otherVector.cross upVector
-      sign = @dot(normalVector) > 0 ? 1: -1
+      sign = if @dot(normalVector) > 0 then 1 else -1
+
       angle = Math.abs(Math.acos(bindTo(@dot(otherVector) / (@length() * otherVector.length()), -1, 1)))
 
       sign * angle
