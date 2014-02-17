@@ -5,24 +5,32 @@ define ['cs!coffee/visualizer/socketVisualizer', 'cs!coffee/geometry/point3', 'c
       super(socketClient, 'IntelPerceptual')
 
     _moveLine: (lineId, line) =>
-      @_moveElementUsingRotationAngles @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line),getRotation(line)
+      @_moveElementUsingRotationMatrix @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line), @_getRotationMatrixForLine(line)
 
     getScaleFactor = (line) ->
       startPosition = getPosition(line.start)
       endPosition = getPosition(line.end)
-
       scaleFactor = endPosition.subtract(startPosition).length() * 40
 
-      [1, scaleFactor, 1]
+      return [1, scaleFactor, 1]
+
+    getPosition = (point) ->
+      return new Point3(point.x, point.z, point.y)
+
+    _getRotationMatrixForLine: (line) ->
+      startPosition = getPosition(line.start)
+      endPosition = getPosition(line.end)
+      directionVector = startPosition.subtract(endPosition).normalize()
+      return @_getRotationMatrix(directionVector)
 
     getImagePosition = (line) ->
-      startPosition = getShownPosition(line.start)
-      endPosition = getShownPosition(line.end)
+      startPosition = getImagePoint(line.start)
+      endPosition = getImagePoint(line.end)
       startPosition.add(endPosition.subtract(startPosition).divide(2)).toArray()
       startPosition.toArray()
 
-    getShownPosition = (point) ->
-      new Point3(point.x * 4000 - 200, point.z * 1000 - 700, point.y * 7000 + 500)
+    getImagePoint = (worldPosition) ->
+      new Point3(worldPosition.x * 4000 - 200, worldPosition.z * 1000 - 700, worldPosition.y * 7000 + 500)
 
     getRotation = (line) ->
       startPosition = getPosition(line.start)
@@ -30,6 +38,3 @@ define ['cs!coffee/visualizer/socketVisualizer', 'cs!coffee/geometry/point3', 'c
       direction = endPosition.subtract(startPosition).normalize()
 
       return [ -direction.y * 90, 0, direction.x * 90 ]
-
-    getPosition = (point) ->
-      return new Point3(point.x, point.y, point.z)

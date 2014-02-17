@@ -1,4 +1,4 @@
-define ['cs!coffee/helper/colorHelper'], (colorHelper) ->
+define ['cs!coffee/helper/colorHelper', 'cs!coffee/geometry/vector3'], (colorHelper, Vector3) ->
   class Visualizer
 
     _createElement: (id, elementIdToClone) =>
@@ -10,6 +10,18 @@ define ['cs!coffee/helper/colorHelper'], (colorHelper) ->
       for id in elementIdsToRemove
         allElements[id].remove()
         delete allElements[id]
+
+    _getRotationMatrix: (direction) ->
+      directionVector = direction.normalize()
+      upVector = new Vector3(0, 0, 1)
+
+      xAxis = upVector.cross(directionVector).normalize()
+      yAxis = directionVector.cross(xAxis).normalize()
+
+      return [ xAxis.x, xAxis.y, xAxis.z, 0
+               directionVector.x, directionVector.y, directionVector.z, 0,
+               yAxis.x, yAxis.y, yAxis.z, 0,
+               0, 0, 0, 1]
 
     _moveElementUsingRotationAngles: (element, scale, position, rotation) ->
       transform = ""

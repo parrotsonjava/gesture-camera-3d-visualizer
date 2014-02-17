@@ -6,18 +6,23 @@ define ['cs!coffee/visualizer/socketVisualizer', 'cs!coffee/geometry/point3', 'c
       super(socketClient, 'Kinect2')
 
     _moveLine: (lineId, line) =>
-      @_moveElementUsingRotationMatrix @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line), @_getRotationMatrix(line)
+      @_moveElementUsingRotationMatrix @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line), @_getRotationMatrixForLine(line)
+
+    _getRotationMatrixForLine: (line) ->
+      startPosition = getImagePoint(line.start)
+      endPosition = getImagePoint(line.end)
+      directionVector = startPosition.subtract(endPosition).normalize()
+      return @_getRotationMatrix(directionVector)
 
     getImagePosition = (line) ->
-      startPosition = getShownPosition(line.start).toArray()
+      startPosition = getImagePoint(line.start).toArray()
 
-    getShownPosition = (point) ->
-      new Point3(point.x * factor * 5, point.z * factor * 3 - factor * 7, point.y * factor * 10 + factor * 15)
+    getImagePoint = (worldPosition) ->
+      new Point3(worldPosition.x * factor * 5, worldPosition.z * factor * 3 - factor * 7, worldPosition.y * factor * 10 + factor * 15)
 
     getScaleFactor = (line) ->
-      startPosition = getShownPosition(line.start)
-      endPosition = getShownPosition(line.end)
-
+      startPosition = getImagePoint(line.start)
+      endPosition = getImagePoint(line.end)
       scaleFactor = endPosition.subtract(startPosition).length() / 100
 
       [factor / 100, scaleFactor, factor / 100]
