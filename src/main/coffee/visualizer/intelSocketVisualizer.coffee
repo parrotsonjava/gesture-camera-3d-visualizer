@@ -5,7 +5,7 @@ define ['cs!coffee/visualizer/socketVisualizer', 'cs!coffee/geometry/point3', 'c
       super(socketClient, 'IntelPerceptual')
 
     _moveLine: (lineId, line) =>
-      @_moveElement @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line),getRotation(line)
+      @_moveElementUsingRotationAngles @_currentLineElements[lineId], getScaleFactor(line), getImagePosition(line),getRotation(line)
 
     getScaleFactor = (line) ->
       startPosition = getPosition(line.start)
