@@ -21,11 +21,11 @@ define ['cs!coffee/event/eventEmitter'], (EventEmitter) ->
       console.log 'Connection opened'
 
     _messageArrived: (eventArgs) =>
-      try
+      #try
         data = JSON.parse(eventArgs.data)
         @_emit 'data', data
-      catch e
-        @_errorOccured(new Error("Error while processing data '#{eventArgs.data}'"))
+      #catch e
+      #  @_errorOccured(new Error("Error while processing data '#{eventArgs.data}'"))
 
     _errorOccured: (eventArgs) =>
       @_emit 'error', eventArgs
