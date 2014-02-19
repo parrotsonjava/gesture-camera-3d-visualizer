@@ -1,7 +1,9 @@
 define ['cs!coffee/helper/hashFunctions'], (hashFunctions) ->
   class ColorHelper
     getColorFor: (id) ->
-      "#" + pad((Math.abs(hashFunctions.djb2("#{id}")) % 16777216).toString(16), '0', 6)
+      console.log id
+
+      "#" + pad((Math.abs(hashFunctions.djb2("#{id}")) % 8000000).toString(16), '0', 6)
 
     pad = (value, fillCharacter, length) ->
       text = '' + value;
