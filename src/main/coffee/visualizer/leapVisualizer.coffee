@@ -10,8 +10,9 @@ define ['cs!coffee/visualizer/visualizer', 'cs!coffee/helper/randomHelper', 'jqu
       @_leapController.on 'frame', @_onFrame
 
     _onFrame: (frame) =>
-      @_recalculateHands frame.hands
-      @_recalculateFingers frame.pointables
+      if frame.hands? and frame.pointables?
+        @_recalculateHands frame.hands
+        @_recalculateFingers frame.pointables
 
     _recalculateHands: (frameHands) =>
       idsUsed = {}
