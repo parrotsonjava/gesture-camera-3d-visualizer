@@ -13,7 +13,7 @@ define ['cs!coffee/visualizer/visualizer',
       if !calibrationValues?
         return @_calibrationValues
       else
-        @_calibrationValues = $.merge calibrationValues, @_calibrationValues
+        @_calibrationValues = calibrationValues # $.merge calibrationValues, @_calibrationValues
 
     _removeAllLines: =>
       @_removeElementsFrom @_currentLineElements, (lineId for lineId, lineElement of @_currentLineElements)

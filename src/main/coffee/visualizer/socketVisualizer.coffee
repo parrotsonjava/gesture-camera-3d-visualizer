@@ -1,8 +1,9 @@
 #noinspection CoffeeScriptUnusedLocalSymbols
-define ['cs!coffee/visualizer/lineVisualizer'], (LineVisualizer) ->
+define ['cs!coffee/visualizer/lineVisualizer', 'cs!coffee/geometry/line'], (LineVisualizer, Line) ->
   class SocketVisualizer extends LineVisualizer
 
     constructor: (socketClient, filteredType) ->
+      super()
       @_socketClient = socketClient
       @_filteredType = filteredType
 
@@ -25,6 +26,7 @@ define ['cs!coffee/visualizer/lineVisualizer'], (LineVisualizer) ->
       for entity in entities
         for line in entity.lines
           lines.push(new Line(@_getLineId(entity, line), line.start, line.end))
+      return lines
 
     _getLineId: (entity, line) =>
       return "#{entity.id}_#{line.id}"
