@@ -1,32 +1,30 @@
-define ['cs!coffee/visualizer/visualizer',  'jquery'], (Visualizer, $) ->
-  class SocketVisualizer extends Visualizer
+#noinspection CoffeeScriptUnusedLocalSymbols
+define ['cs!coffee/visualizer/lineVisualizer'], (LineVisualizer) ->
+  class SocketVisualizer extends LineVisualizer
 
     constructor: (socketClient, filteredType) ->
       @_socketClient = socketClient
       @_filteredType = filteredType
-      @_currentLineElements = {}
 
     start: =>
       @_socketClient.on 'data', @_dataArrived
       @_socketClient.on 'disconnected', @_disconnected
 
     _disconnected: =>
-      @_removeElementsFrom @_currentLineElements, (lineId for lineId, lineElement of @_currentLineElements)
+      @_removeAllLines()
 
     _dataArrived: (data) =>
       return if !@_filteredType? || @_filteredType != data.type
-      @_recalculateEntities data.entities if data?.entities?
+      @_displayEntities data.entities if data?.entities?
 
-    _recalculateEntities: (entities) =>
-      idsUsed = {}
+    _displayEntities: (entities) =>
+      @_displayLines @_getLinesForEntities(entities)
+
+    _getLinesForEntities: (entities) =>
+      lines = []
       for entity in entities
         for line in entity.lines
-          lineId = @_getLineId(entity, line)
-          idsUsed[lineId] = true
-          @_currentLineElements[lineId] = @_currentLineElements[lineId] || @_createElement(lineId, 'line')
-          @_moveLine(lineId, line)
-
-      @_removeElementsFrom @_currentLineElements, (lineId for lineId, lineElement of @_currentLineElements when !idsUsed[lineId])
+          lines.push(new Line(@_getLineId(entity, line), line.start, line.end))
 
     _getLineId: (entity, line) =>
       return "#{entity.id}_#{line.id}"

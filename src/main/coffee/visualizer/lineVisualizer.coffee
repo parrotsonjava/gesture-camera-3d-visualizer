@@ -7,13 +7,16 @@ define ['cs!coffee/visualizer/visualizer',
       @_calibrationValues = {}
       @_currentLineElements = {}
 
-      @calibration {"multX": 100, "addX": 0, "multY": 100, "addY": 0, "multZ": 100, "addZ": 0, "lineThickness": 30}
+      @calibration {"multX": 100, "addX": 0, "multY": 100, "addY": 0, "multZ": 100, "addZ": 0, "lineThickness": 30, "lineStretch": 1}
 
     calibration: (calibrationValues) =>
       if !calibrationValues?
         return @_calibrationValues
       else
         @_calibrationValues = $.merge calibrationValues, @_calibrationValues
+
+    _removeAllLines: =>
+      @_removeElementsFrom @_currentLineElements, (lineId for lineId, lineElement of @_currentLineElements)
 
     _displayLines: (lines) =>
       idsUsed = {}
@@ -30,7 +33,7 @@ define ['cs!coffee/visualizer/visualizer',
     _getScaleFactor: (line) =>
       startPosition = @_getImagePoint(line.start)
       endPosition = @_getImagePoint(line.end)
-      scaleFactor = endPosition.subtract(startPosition).length() / 100
+      scaleFactor = endPosition.subtract(startPosition).length() / 100 * @_calibrationValues.lineStretch
 
       [@_calibrationValues.lineThickness / 100, scaleFactor, @_calibrationValues.lineThickness / 100]
 
