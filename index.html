@@ -40,5 +40,54 @@
         </div>
     </div>
 </div>
+
+<div id="calibration-area"
+     style="position: absolute; left: 0; top: 0; width: 275px; height: 230px; background-color: white; display: none;">
+    <table border="0">
+        <tr>
+            <td><label for="input-multX">multX</label></td>
+            <td><input type="range" min="-1500" max="1500" class="range-input-field" id="input-multX" size="5"
+                       value="150" style="border: 1px solid black;"/></td>
+            <td id="value-multX"></td>
+        </tr>
+        <tr>
+            <td><label for="input-addX">addX</label></td>
+            <td><input type="range" min="-1500" max="1500" class="range-input-field" id="input-addX" size="5" value="0"
+                       style="border: 1px solid black;"/></td>
+            <td id="value-addX"></td>
+        </tr>
+        <tr>
+            <td><label for="input-multY">multY</label></td>
+            <td><input type="range" min="-1500" max="1500" class="range-input-field" id="input-multY" size="5"
+                       value="300" style="border: 1px solid black;"/></td>
+            <td id="value-multY"></td>
+        </tr>
+        <tr>
+            <td><label for="input-addY">addY</label></td>
+            <td><input type="range" min="-1500" max="1500" class="range-input-field" id="input-addY" size="5"
+                       value="450" style="border: 1px solid black;"/></td>
+            <td id="value-addY"></td>
+        </tr>
+        <tr>
+            <td><label for="input-multZ">multZ</label></td>
+            <td><input type="range" min="-1500" max="1500" class="range-input-field" id="input-multZ" size="5"
+                       value="90" style="border: 1px solid black;"/></td>
+            <td id="value-multZ"></td>
+        </tr>
+        <tr>
+            <td><label for="input-addZ">addZ</label></td>
+            <td><input type="range" min="-1500" max="1500" class="range-input-field" id="input-addZ" size="5"
+                       value="-210" style="border: 1px solid black;"/></td>
+            <td id="value-addZ"></td>
+        </tr>
+        <tr>
+            <td><label for="input-lineThickness">lineThickness</label></td>
+            <td><input type="range" min="-100" max="100" class="range-input-field" id="input-lineThickness" size="5"
+                       value="30" style="border: 1px solid black;"/></td>
+            <td id="value-lineThickness"></td>
+        </tr>
+    </table>
+</div>
+
 </body>
 </html>

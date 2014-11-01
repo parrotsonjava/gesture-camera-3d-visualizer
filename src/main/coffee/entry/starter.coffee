@@ -4,31 +4,37 @@ define [
   'jquery-purl',
   'cs!coffee/input/socketClient',
   'cs!coffee/input/leapController',
+  'cs!coffee/input/intelRealSenseFaceController'
   'cs!coffee/visualizer/leapVisualizer',
   'cs!coffee/visualizer/intelSocketVisualizer'
   'cs!coffee/visualizer/kinectSocketVisualizer'
-], (Less, $, urlParser, SocketClient, LeapController, LeapVisualizer, IntelSocketVisualizer, KinectSocketVisualizer) ->
+  'cs!coffee/visualizer/intelRealSenseFaceVisualizer'
+], (Less, $, urlParser,
+    SocketClient, LeapController, IntelRealSenseFaceController,
+    LeapVisualizer, IntelSocketVisualizer, KinectSocketVisualizer, IntelRealSenseFaceVisualizer) ->
+  visualizer = null
 
   getFilter = () ->
     urlParser().param('filter')
+  shouldBeCalibrated = () ->
+    urlParser().param('calibration')?
 
   start = ->
-    filter = getFilter()
-    leapController = new LeapController()
+    startVisualizer(getFilter())
+    if (shouldBeCalibrated())
+      window.itemToCalibrate = visualizer
 
+  startVisualizer = (filter) ->
     if (filter == 'Leap')
-      startLeapVisualizer(leapController)
+      new LeapVisualizer(new LeapController()).start()
+    else if (filter == 'IntelRealSense')
+      (visualizer = new IntelRealSenseFaceVisualizer(new IntelRealSenseFaceController())).start()
     else
       startSocketVisualizer(filter)
-
-  startLeapVisualizer = (leapController) ->
-    new LeapVisualizer(leapController).start()
 
   startSocketVisualizer = (filter) ->
     hostName = 'localhost'
     port = 8100
-
-
 
     new IntelSocketVisualizer(new SocketClient(hostName, port), filter).start() if filter == 'IntelPerceptual'
     new KinectSocketVisualizer(new SocketClient(hostName, port), filter).start() if filter == 'Kinect2'
