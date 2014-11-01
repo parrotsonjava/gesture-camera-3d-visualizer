@@ -33,7 +33,7 @@ define ['cs!coffee/visualizer/visualizer',
     _getScaleFactor: (line) =>
       startPosition = @_getImagePoint(line.start)
       endPosition = @_getImagePoint(line.end)
-      scaleFactor = endPosition.subtract(startPosition).length() / 100 * @_calibrationValues.lineStretch
+      scaleFactor = (endPosition.subtract(startPosition).length() / 100) * @_calibrationValues.lineStretch
 
       [@_calibrationValues.lineThickness / 100, scaleFactor, @_calibrationValues.lineThickness / 100]
 

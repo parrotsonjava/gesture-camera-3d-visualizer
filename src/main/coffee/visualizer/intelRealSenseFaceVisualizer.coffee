@@ -7,7 +7,7 @@ define ['cs!coffee/visualizer/lineVisualizer',
 
     constructor: (@_controller) ->
       super()
-      @calibration {"multX": 1500, "addX": 0, "multY": 1500, "addY": 450, "multZ": 500, "addZ": -50, "lineThickness": 10}
+      @calibration {"multX": 1500, "addX": 0, "multY": 1500, "addY": 450, "multZ": 500, "addZ": -50, "lineThickness": 10, "lineStretch": 1}
 
     start: =>
       @_controller.on 'frame', @_onFrame
