@@ -5,13 +5,16 @@ define [
   'cs!coffee/input/socketClient',
   'cs!coffee/input/leapController',
   'cs!coffee/input/intelRealSenseFaceController'
+  'cs!coffee/input/intelRealSenseHandsController'
   'cs!coffee/visualizer/leapVisualizer',
   'cs!coffee/visualizer/intelSocketVisualizer'
   'cs!coffee/visualizer/kinectSocketVisualizer'
   'cs!coffee/visualizer/intelRealSenseFaceVisualizer'
+  'cs!coffee/visualizer/intelRealSenseHandsVisualizer'
 ], (Less, $, urlParser,
-    SocketClient, LeapController, IntelRealSenseFaceController,
-    LeapVisualizer, IntelSocketVisualizer, KinectSocketVisualizer, IntelRealSenseFaceVisualizer) ->
+    SocketClient, LeapController, IntelRealSenseFaceController, IntelRealSenseHandsController
+    LeapVisualizer, IntelSocketVisualizer, KinectSocketVisualizer,
+    IntelRealSenseFaceVisualizer, IntelRealSenseHandsVisualizer) ->
   visualizer = null
 
   getFilter = () ->
@@ -27,8 +30,8 @@ define [
   startVisualizer = (filter) ->
     if (filter == 'Leap')
       new LeapVisualizer(new LeapController()).start()
-    else if (filter == 'IntelRealSense')
-      (visualizer = new IntelRealSenseFaceVisualizer(new IntelRealSenseFaceController())).start()
+    else if (/^IntelRealSense/.test filter)
+      startIntelRealSenseVisualizer(filter)
     else
       startSocketVisualizer(filter)
 
@@ -38,6 +41,12 @@ define [
 
     new IntelSocketVisualizer(new SocketClient(hostName, port), filter).start() if filter == 'IntelPerceptual'
     new KinectSocketVisualizer(new SocketClient(hostName, port), filter).start() if filter == 'Kinect2'
+
+  startIntelRealSenseVisualizer = (filter) ->
+    visualizer = new IntelRealSenseFaceVisualizer(new IntelRealSenseFaceController()) if filter == 'IntelRealSense-Face'
+    visualizer = new IntelRealSenseHandsVisualizer(new IntelRealSenseHandsController())if filter == 'IntelRealSense-Hands'
+
+    visualizer.start()
 
   zoomWindow = ->
     setZoomLevel()
@@ -55,4 +64,4 @@ define [
   $ ->
     zoomWindow()
     start()
-    #waitForPurl(start)
+#waitForPurl(start)

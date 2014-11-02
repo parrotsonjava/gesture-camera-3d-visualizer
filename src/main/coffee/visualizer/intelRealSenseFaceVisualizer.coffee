@@ -1,7 +1,7 @@
-define ['cs!coffee/visualizer/lineVisualizer',
+define ['cs!coffee/visualizer/intelRealSenseVisualizer',
         'cs!coffee/geometry/point3',
-        'cs!coffee/geometry/line'], (LineVisualizer, Point3, Line) ->
-  class IntelRealSenseFaceVisualizer extends LineVisualizer
+        'cs!coffee/geometry/line'], (IntelRealSenseVisualizer, Point3, Line) ->
+  class IntelRealSenseFaceVisualizer extends IntelRealSenseVisualizer
 
     CONFIDENCE_THRESHOLD = 90;
 
@@ -13,13 +13,14 @@ define ['cs!coffee/visualizer/lineVisualizer',
       @_controller.on 'frame', @_onFrame
 
     _onFrame: (frame) =>
-      [@_displayFace(face) if face?.landmarks?.landmarksPoints for face in frame.faces] if frame.faces and frame.faces.length
+      faces = if frame.faces? then frame.faces else []
+      faceLines = @_concatenateLines (@_getLinesForFace(face) for face in faces)
 
-    _displayFace: (face) =>
+      @_displayLines(faceLines)
+
+    _getLinesForFace: (face) =>
       landmarksPoints = face?.landmarks?.landmarksPoints
-      return if !landmarksPoints
-
-      @_displayLines(@_getLines(face.userID, landmarksPoints))
+      return if landmarksPoints? then @_getLines(face.userID, landmarksPoints) else []
 
     _getLines: (userId, landmarksPoints) =>
       lines = []
@@ -38,22 +39,8 @@ define ['cs!coffee/visualizer/lineVisualizer',
 
       return lines.filter (line) -> line.start? and line.end?
 
-    _getLineSegment: (userId, bodyPart, landmarksPoints, range, closed) =>
-      detectedPoints = (landmarksPoints[i] for i in range).filter((point) -> point.confidenceWorld > CONFIDENCE_THRESHOLD)
-      detectedPositions = (@_getPoint(point) for point in detectedPoints).filter((point) -> point?)
-
-      lineIndex = 0;
-      lineSegment = (new Line(@_getLineId(userId, bodyPart, lineIndex++),
-        detectedPositions[i],
-        detectedPositions[(i + 1) % detectedPositions.length]) for i in [0...detectedPositions.length - 1])
-
-      lineSegment.push new Line(@_getLineId(userId, bodyPart, lineIndex++),
-        detectedPositions[detectedPositions.length - 1], detectedPositions[0]) if closed
-
-      return lineSegment
-
-    _getLineId: (userId, bodyPart, lineIndex) =>
-      return "#{userId}_#{bodyPart}_#{lineIndex}"
+    _isDetected: (point) =>
+      point.confidenceWorld > CONFIDENCE_THRESHOLD
 
     _getPoint: (point) =>
       worldPoint = point?.world
