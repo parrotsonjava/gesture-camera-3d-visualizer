@@ -11,17 +11,19 @@ define ['intel-realSense', 'cs!coffee/input/intelRealSenseController'], (realSen
         @_setStatus e.message
 
     _initialize: =>
+      handModule = null
       captureManager = null
       handConfiguration = null
 
       realSense().then((sense) =>
         @_sense = sense
         @_sense.EnableHand @_onHand
-      ).then(=>
+      ).then((hand) =>
+        handModule = hand
         console.log "RealSense initialization started"
         @_sense.Init(@_onConnect)
       ).then(=>
-        @_sense.CreateHandConfiguration()
+        handModule.CreateActiveConfiguration()
       ).then((handConfig) =>
         handConfiguration = handConfig
         handConfiguration.DisableAllAlerts()

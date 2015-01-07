@@ -17,8 +17,8 @@ define ['intel-realSense', 'cs!coffee/input/intelRealSenseController'], (realSen
       realSense().then((sense) =>
         @_sense = sense
         @_sense.EnableFace @_onFace
-      ).then(=>
-        @_sense.CreateFaceConfiguration()
+      ).then((faceModule) =>
+        faceModule.CreateActiveConfiguration()
       ).then((faceConfig) =>
         faceConfiguration = faceConfig
         @_setFaceConfiguration(faceConfiguration)
