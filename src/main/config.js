@@ -8,8 +8,8 @@ require({
         'jquery-purl': 'js/vendor/jquery-purl',
 
         'leap': 'js/vendor/leap',
-        'intel-realSense': 'js/vendor/intel/realsense-3.0',
-        'intel-realSense-info': 'js/vendor/intel/realsenseinfo-3.0',
+        'intel-realSense': 'js/vendor/intel/realsense-4.0',
+        'intel-realSense-info': 'js/vendor/intel/realsenseinfo-4.0',
         'intel-realSense-promise': 'js/vendor/intel/promise-1.0.0.min'
     },
     shim: {
