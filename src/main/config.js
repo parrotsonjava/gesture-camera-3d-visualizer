@@ -8,13 +8,12 @@ require({
         'jquery-purl': 'js/vendor/jquery-purl',
 
         'leap': 'js/vendor/leap',
-        'intel-realSense': 'js/vendor/intel/realsense-4.0',
-        'intel-realSense-info': 'js/vendor/intel/realsenseinfo-4.0',
-        'intel-realSense-promise': 'js/vendor/intel/promise-1.0.0.min'
+        'intel-realSense': 'js/vendor/intel/realsense-5.0',
+        'intel-realSense-promise': 'js/vendor/intel/promise-6.1.0',
+        'intel-realSense-autobahn': 'js/vendor/intel/autobahn'
     },
     shim: {
         'leap': { exports: 'Leap' },
-        'intel-realSense': { exports: 'PXCMSenseManager_CreateInstance' },
-        'intel-realSense-info': { exports: 'RealSenseInfo' }
+        'intel-realSense': ['intel-realSense-promise', 'intel-realSense-autobahn']
     }
 }, ['cs!coffee/entry/starter', 'cs!coffee/calibration/calibration']);

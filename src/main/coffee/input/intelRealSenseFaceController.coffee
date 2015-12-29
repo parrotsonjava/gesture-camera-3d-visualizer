@@ -1,51 +1,76 @@
 #noinspection CoffeeScriptUnusedLocalSymbols
-define ['intel-realSense', 'cs!coffee/input/intelRealSenseController'], (realSense, IntelRealSenseController) ->
-  class IntelRealSenseFaceController extends IntelRealSenseController
-    modes = {"2D": 0, "3D": 1}
+define [
+  'cs!coffee/input/intelRealSenseController',
+  'cs!coffee/input/intelRealSenseWrapper'
+], (RealSenseController, realSense) ->
+  class RealSenseFaceController extends RealSenseController
 
-    constructor: ->
+    DEFAULT_NUMBER_OF_TRACKED_FACES = 1
+    TRACKING_MODE_3D = 1
+
+    constructor: (options) ->
+      super()
+      @_maxTrackedFaces = if options?.maxTrackedFaces? then options.maxTrackedFaces else DEFAULT_NUMBER_OF_TRACKED_FACES
+      @startController()
+
+    startController: =>
       try
-        super()
-        @_initialize()
+        @_checkPlatform('face3d', @_initialize)
       catch e
-        @_setStatus e.message
+        console.error e
 
     _initialize: =>
-      captureManager = null
+      faceModule = null
       faceConfiguration = null
 
-      realSense().then((sense) =>
+      realSense.SenseManager.createInstance().then((sense) =>
         @_sense = sense
-        @_sense.EnableFace @_onFace
-      ).then((faceModule) =>
-        faceModule.CreateActiveConfiguration()
+        window.onbeforeunload = @_releaseRealSense
+        return realSense.face.FaceModule.activate(@_sense)
+      ).then((module) =>
+        faceModule = module
+        return faceModule.createActiveConfiguration()
       ).then((faceConfig) =>
         faceConfiguration = faceConfig
-        @_setFaceConfiguration(faceConfiguration)
+
+        faceConfiguration.detection.isEnabled = true
+        faceConfiguration.detection.maxTrackedFaces = @_maxTrackedFaces
+        faceConfiguration.trackingMode = TRACKING_MODE_3D
+
+        return faceConfiguration.applyChanges()
       ).then(=>
-        faceConfiguration.ApplyChanges()
+        console.log 'RealSense initialization started'
+        @_sense.onDeviceConnected = @_onConnect
+        @_sense.onStatusChanged = @_onStatus
+        faceModule.onFrameProcessed = @_onFrame
+
+
+        return @_sense.init()
       ).then(=>
-        console.log "RealSense initialization started"
-        @_sense.Init()
+        faceConfiguration.landmarks.isEnabled = true
+        faceConfiguration.landmarks.maxTrackedFaces = @_maxTrackedFaces
+        faceConfiguration.pose.isEnabled = false
+        faceConfiguration.expressions.properties.isEnabled = false
+
+        return faceConfiguration.applyChanges()
       ).then(=>
-        @_sense.QueryCaptureManager()
-      ).then((captureManager) =>
-        captureManager.QueryImageSize(captureManager.STREAM_TYPE_COLOR)
-      ).then((image) =>
-        @_imageSize = image.size
-        @_sense.StreamFrames()
+        @_imageSize = @_sense.captureManager.queryImageSize(realSense.StreamType.STREAM_TYPE_DEPTH)
+        return @_sense.streamFrames()
       ).then(=>
-        console.log "Frame streaming started"
+        @_emit 'initialized'
+        console.log 'Frame streaming started'
+
       ).catch((e) =>
-        throw new Error(e)
+        @_emit 'error', {error: e}
       )
 
-    _setFaceConfiguration: (faceConfiguration) =>
-      faceConfiguration.configs.detection.isEnabled = true
-      faceConfiguration.configs.landmarks.isEnabled = true
-      faceConfiguration.configs.pose.isEnabled = false
-      faceConfiguration.configs.expressionProperties.isEnabled = false
-      return faceConfiguration.SetTrackingMode(modes["3D"])
+    _onConnect: =>
+      console.log 'RealSense initialized'
 
-    _onFace: (mid, module, frame) =>
-      @_emit 'frame', frame
+    _onStatus: (sts) =>
+      if sts < 0
+        console.log('Module error with status code: ' + sts);
+        clear();
+
+    _onFrame: (sender, data) =>
+      @_emit 'faces', data

@@ -10,17 +10,16 @@ define ['cs!coffee/visualizer/intelRealSenseVisualizer',
       @calibration {"multX": 1500, "addX": 0, "multY": 1500, "addY": 450, "multZ": 500, "addZ": -50, "lineThickness": 20, "lineStretch": 1}
 
     start: =>
-      @_controller.on 'frame', @_onFrame
+      @_controller.on 'hands', @_onHands
 
-    _onFrame: (frame) =>
+    _onHands: (handsData) =>
       handIndex = 0
-      hands = if frame.hands? then frame.hands else []
-
+      hands = if handsData.numberOfHands > 0 then handsData.hands else []
       handLines = @_concatenateLines (@_getLinesForHand(hand, handIndex++) for hand in hands)
       @_displayLines(handLines)
 
     _getLinesForHand: (hand, handIndex) =>
-      joints = hand?.trackedJoint
+      joints = hand?.trackedJoints
       return if joints then @_getLines("#{hand.userId}-#{handIndex}", joints) else []
 
     _getLines: (userHandIndex, trackedJoints) =>

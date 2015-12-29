@@ -1,51 +1,62 @@
 #noinspection CoffeeScriptUnusedLocalSymbols
-define ['intel-realSense', 'cs!coffee/input/intelRealSenseController'], (realSense, IntelRealSenseController) ->
-  class IntelRealSenseHandsController extends IntelRealSenseController
-    modes = {"2D": 0, "3D": 1}
-
+define [
+  'cs!coffee/input/intelRealSenseController',
+  'cs!coffee/input/intelRealSenseWrapper'
+], (RealSenseController, realSense) ->
+  class RealSenseHandsController extends RealSenseController
     constructor: ->
-      try
         super()
-        @_initialize()
+        @startController()
+
+    startController: =>
+      try
+        @_checkPlatform('hand', @_initialize)
       catch e
-        @_setStatus e.message
+        console.error e
 
     _initialize: =>
       handModule = null
-      captureManager = null
       handConfiguration = null
 
-      realSense().then((sense) =>
+      realSense.SenseManager.createInstance().then((sense) =>
         @_sense = sense
-        @_sense.EnableHand @_onHand
+        window.onbeforeunload = @_releaseRealSense
+        return realSense.hand.HandModule.activate(@_sense);
       ).then((hand) =>
         handModule = hand
-        console.log "RealSense initialization started"
-        @_sense.Init(@_onConnect)
+        console.log 'RealSense initialization started'
+
+        @_sense.onDeviceConnected = @_onConnect
+        handModule.onFrameProcessed = @_onFrame
+        return @_sense.init()
       ).then(=>
-        handModule.CreateActiveConfiguration()
+        handModule.createActiveConfiguration()
       ).then((handConfig) =>
         handConfiguration = handConfig
-        handConfiguration.DisableAllAlerts()
+        handConfiguration.allAlerts = true
+        handConfiguration.allGestures = true
+
+        return handConfiguration.applyChanges()
       ).then(=>
-        handConfiguration.DisableAllGestures()
+        return handConfiguration.release();
       ).then(=>
-        handConfiguration.ApplyChanges()
+        @_imageSize = @_sense.captureManager.queryImageSize(realSense.StreamType.STREAM_TYPE_DEPTH)
+        return @_sense.streamFrames()
       ).then(=>
-        @_sense.QueryCaptureManager()
-      ).then((captureManager) =>
-        captureManager.QueryImageSize(captureManager.STREAM_TYPE_DEPTH)
-      ).then((image) =>
-        @_imageSize = image.size
-        @_sense.StreamFrames()
-      ).then(=>
-        console.log "Frame streaming started"
+        @_emit 'initialized'
+        console.log 'Frame streaming started'
+
       ).catch((e) =>
-        throw new Error(e)
+        @_emit 'error', {error: e}
       )
 
     _onConnect: =>
-      console.log "RealSense initialized"
+      console.log 'RealSense initialized'
 
-    _onHand: (mid, module, frame) =>
-      @_emit 'frame', frame
+    _onFrame: (sender, data) =>
+      handsData = { numberOfHands: data.numberOfHands }
+
+      if data.numberOfHands > 0
+        handsData.hands = data.queryHandData(realSense.hand.AccessOrderType.ACCESS_ORDER_NEAR_TO_FAR)
+
+      @_emit 'hands', handsData

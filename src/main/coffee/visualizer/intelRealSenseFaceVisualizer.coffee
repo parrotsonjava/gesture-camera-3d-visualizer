@@ -10,16 +10,16 @@ define ['cs!coffee/visualizer/intelRealSenseVisualizer',
       @calibration {"multX": 1500, "addX": 0, "multY": 1500, "addY": 450, "multZ": 500, "addZ": -50, "lineThickness": 10, "lineStretch": 1}
 
     start: =>
-      @_controller.on 'frame', @_onFrame
+      @_controller.on 'faces', @_onFaces
 
-    _onFrame: (frame) =>
-      faces = if frame.faces? then frame.faces else []
+    _onFaces: (faceData) =>
+      faces = if faceData.faces? then faceData.faces else []
       faceLines = @_concatenateLines (@_getLinesForFace(face) for face in faces)
 
       @_displayLines(faceLines)
 
     _getLinesForFace: (face) =>
-      landmarksPoints = face?.landmarks?.landmarksPoints
+      landmarksPoints = face?.landmarks?.points
       return if landmarksPoints? then @_getLines(face.userID, landmarksPoints) else []
 
     _getLines: (userId, landmarksPoints) =>

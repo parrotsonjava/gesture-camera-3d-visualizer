@@ -1,26 +1,32 @@
 #noinspection CoffeeScriptUnusedLocalSymbols
 define [
-  'intel-realSense-promise',
-  'intel-realSense',
-  'intel-realSense-info',
-  'cs!coffee/event/eventEmitter'
-], (IntelRealSensePromise, realSense, realSenseInfo, EventEmitter) ->
-  class IntelRealSenseController extends EventEmitter
+  'cs!coffee/event/eventEmitter',
+  'cs!coffee/input/intelRealSenseWrapper'
+], (EventEmitter, realSense) ->
+  class RealSenseController extends EventEmitter
+
     constructor: ->
       super()
-      @_checkPlatform()
 
-    _checkPlatform: =>
-      realSenseInfo ['face3d'], (info) =>
-        if info.IsReady
-          console.log "The SDK is ready to be used"
-        else if !info.IsPlatformSupported
-          throw new Error("This platform is not supported")
-        else if !info.IsBrowserSupported
-          throw new Error("This browser is not supported")
-        else
-          requiredUpdates = [update.href for update in info.Updates].join(", ")
-          throw new Error("The following updates need to be installed: #{requiredUpdates}")
+    _checkPlatform: (desiredFeature, successCallback) =>
+      console.log 'Checking platform for RealSense usage'
+      realSense.SenseManager.detectPlatform([desiredFeature], ['front']).then((info) =>
+        if info.nextStep == 'ready'
+          console.log 'The SDK is ready to be used'
+          successCallback()
+        else if info.nextStep == 'unsupported'
+          @_emit 'error', {error: new Error('This platform is not supported')}
+        else if info.nextStep == 'browser'
+          @_emit 'error', {error: new Error('The browser is not supported')}
+        else if info.nextStep == 'driver'
+          @_emit 'error', {error: new Error('The RealSense driver is missing')}
+        else if info.nextStep == 'runtime'
+          @_emit 'error', {error: new Error('The RealSense web runtime is missing')}
+      ).catch (error) =>
+        @_emit 'error', {error: new Error("Error while detecting the platform #{error.message}")}
 
-    _setStatus: (message) =>
-      console.log message
+    _releaseRealSense: =>
+      if @_sense?
+        @_sense.release().then =>
+          console.log 'released'
+          @_sense = undefined
