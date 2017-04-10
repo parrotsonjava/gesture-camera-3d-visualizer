@@ -9,6 +9,7 @@ define ['cs!coffee/event/eventEmitter'], (EventEmitter) ->
       @_reconnect()
 
     _reconnect: =>
+      console.log 'Connecting'
       @_connection = new WebSocket(@_host)
 
       @_connection.onopen = @_connectionOpened
